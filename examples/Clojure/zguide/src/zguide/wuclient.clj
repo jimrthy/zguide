@@ -1,6 +1,6 @@
-(ns wuclient
+(ns zguide.wuclient
   (:refer-clojure :exclude [send])
-  (:use [zhelpers :as mq])
+  (:use [zguide.zhelpers :as mq])
   (:import [java.util StringTokenizer]))
 
 ;;
@@ -13,20 +13,24 @@
 
 (def total-temp (atom 0))
 
-(defn -main [& args]
-  (let [subscriber (-> 1 mq/context (mq/socket mq/sub))
-        filter (or (first args) "10001 ")
-        args-temp (atom 0)
-        nbr 100]
-    (println "Collecting updates from weather server for " filter)
-    (mq/connect subscriber "tcp://localhost:5556")
-    (mq/subscribe subscriber filter)
-    (dotimes [i nbr]
-      (let [string (mq/recv-str subscriber)
-            sscanf (StringTokenizer. string " ")
-            zipcode (Integer/parseInt (.nextToken sscanf))
-            temperature (Integer/parseInt (.nextToken sscanf))
-            relhumidity (Integer/parseInt (.nextToken sscanf))]
-        (swap! total-temp #(+ % temperature))
-        (println (str "received: " string))))
-    (println (str "Average temperature for zipcode '" filter "' was " (int (/ @total-temp nbr))))))
+(defn- main [& args]
+  (mq/with-context ctx 1
+    (let [subscriber (mq/socket ctx mq/sub)]
+      (try
+        (let [filter (or (first args) "10001 ")
+              args-temp (atom 0)
+              nbr 100]
+            (println "Collecting updates from weather server for " filter)
+            (mq/connect subscriber "tcp://localhost:5556")
+            (mq/subscribe subscriber filter)
+            (dotimes [i nbr]
+              (let [string (mq/recv-str subscriber)
+                    sscanf (StringTokenizer. string " ")
+                    zipcode (Integer/parseInt (.nextToken sscanf))
+                    temperature (Integer/parseInt (.nextToken sscanf))
+                    relhumidity (Integer/parseInt (.nextToken sscanf))]
+                (swap! total-temp #(+ % temperature))
+                (println (str "received: " string))))
+            (println (str "Average temperature for zipcode '" filter "' was " 
+                          (int (/ @total-temp nbr)))))
+        (finally (.close subscriber))))))
