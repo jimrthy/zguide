@@ -11,7 +11,7 @@
   (ZMQ/context threads))
 
 (defmacro with-context
-  [id threads & body]
+  [[id threads] & body]
   `(let [~id (context ~threads)]
      (try ~@body
           (finally (.term ~id)))))

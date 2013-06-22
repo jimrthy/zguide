@@ -16,7 +16,7 @@
   ;; Since it's relying on garbage collection to actually free
   ;; the socket and context.
   ;; Could be totally valid, but it doesn't seem right.
-  (mq/with-context ctx 1 
+  (mq/with-context [ctx 1] 
     (let [publisher (mq/socket ctx mq/pub)
           srandom (Random. (System/currentTimeMillis))]
       (try
@@ -31,3 +31,4 @@
             (mq/send publisher update)))
         (finally
           (.close publisher))))))
+

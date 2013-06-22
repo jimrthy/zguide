@@ -14,7 +14,7 @@
 (def total-temp (atom 0))
 
 (defn- main [& args]
-  (mq/with-context ctx 1
+  (mq/with-context [ctx 1]
     (let [subscriber (mq/socket ctx mq/sub)]
       (try
         (let [filter (or (first args) "10001 ")
