@@ -34,6 +34,11 @@
   [#^ZMQ$Context context type]
   (.socket context type))
 
+(defmacro with-socket [[name context type] & body]
+  `(let [~name (socket ~context ~type)]
+     (try ~@body
+          (finally (.close ~name)))))
+
 (defn queue
   [#^ZMQ$Context context #^ZMQ$Socket frontend #^ZMQ$Socket backend]
   (ZMQQueue. context frontend backend))
