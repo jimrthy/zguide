@@ -1,9 +1,9 @@
 (ns zguide.hwclient
   (:gen-class)
-  (:import [org.zeromq.ZMQ]))
-(comment (ns zguide.hwserver
-           (:gen-class)
-           (:import [org.zeromq.ZMQ])))
+  (:import [org.zeromq ZMQ]))
+
+;; DEBUG ONLY
+;;(println "Request: " ZMQ/REQ)
 
 (defn main []
   (let [context (ZMQ/context 1)]

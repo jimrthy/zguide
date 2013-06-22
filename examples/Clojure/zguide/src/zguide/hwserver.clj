@@ -1,6 +1,6 @@
 (ns zguide.hwserver
   (:gen-class)
-  (:import [org.zeromq.ZMQ]))
+  (:import [org.zeromq ZMQ]))
 
 (defn main []
   (let [context (ZMQ/context 1)]
