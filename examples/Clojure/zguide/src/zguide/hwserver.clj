@@ -8,10 +8,10 @@
       (let [responder (.socket context ZMQ/REP)]
         (try
           (.bind responder "tcp://*:5555")
-          (while (not (.isInterrupted (.currentThread Thread)))
+          (while (not (.isInterrupted (Thread/currentThread)))
             (let [reply (.recv responder 0)]
               (println "Received " (String. reply))
               (.send responder (.getBytes "World") 0))
-            (.sleep Thread 1000))
+            (Thread/sleep 1000))
           (finally (.close responder))))
       (finally (.term context)))))
