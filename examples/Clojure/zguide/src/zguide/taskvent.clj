@@ -17,7 +17,7 @@
     (let
         ;; Socket to send messages on
         [sender (mq/socket ctx mq/push)
-         ;; Socket to send messages on
+         ;; Socket to send start of batch message on
          sink (mq/socket ctx mq/push)
          srandom (Random. (System/currentTimeMillis))
          ;; Total expected cost in msecs
@@ -30,6 +30,8 @@
         (println "Sending tasks to workers...\n")
         ;; The first message is "0" and signals start of batch
         (mq/send sink "0\u0000")
+        ;; This seems like a good case for recur, rather
+        ;; than using an atom. Whatever.
         (dotimes [i 100]
           (let [workload (-> srandom (.nextInt 100) (+ 1))
                 string (format "%d\u0000" workload)]
@@ -37,8 +39,11 @@
             (println (str workload "."))
             (mq/send sender string)))
         (println (str "Total expected cost: " @total-msec " msec"))
-        (finally 
+        (finally
+          (println "Closing sockets")
           (.close sink)
-          (.close sender)))))
+          (.close sender)
+          (println "Sockets closed")))))
+  (println "Wrapping")
   ;; Give 0MQ time to deliver
   (Thread/sleep 1000))

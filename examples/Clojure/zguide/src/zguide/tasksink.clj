@@ -15,12 +15,13 @@
     (let [receiver (mq/socket ctx mq/pull)]
       (try
         (mq/bind receiver "tcp://*:5558")
-                                        ; Wait for start of batch
+        ;; Wait for start of batch
         (mq/recv receiver 0)
+
         (let [tstart (System/currentTimeMillis)]
           (dotimes [i 100]
             (mq/recv receiver)
-            (if (= i (-> (int (/ i 10)) (* 10 )))
+            (if (= (mod 1 10 0))
               (print ":")
               (print ".")))
           ;; Calculate and report duration of batch
