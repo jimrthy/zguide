@@ -12,6 +12,10 @@
 ;;
 
 (defn -main []
+  ;; This sort of approach seems at least a little worrisome.
+  ;; Since it's relying on garbage collection to actually free
+  ;; the socket and context.
+  ;; Could be totally valid, but it doesn't seem right.
   (let [publisher (-> 1 mq/context (mq/socket mq/pub))
         srandom (Random. (System/currentTimeMillis))]
     (mq/bind publisher "tcp://*:5556")
