@@ -9,6 +9,7 @@
 ;; Collects weather updates and finds avg temp in zipcode
 ;;
 ;; Isaiah Peng <issaria@gmail.com>
+;; Updated by: James Gatannah <james@gatannah.com>
 ;;
 
 (def total-temp (atom 0))
@@ -16,6 +17,7 @@
 (defn- main [& args]
   (mq/with-context [ctx 1]
     (mq/with-socket [subscriber ctx mq/sub]
+      ;; filter is a bad variable name
       (let [filter (or (first args) "10001 ")
             args-temp (atom 0)
             nbr 100]
