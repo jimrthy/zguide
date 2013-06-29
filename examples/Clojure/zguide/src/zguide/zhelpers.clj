@@ -3,7 +3,7 @@
 ;;
 (ns zguide.zhelpers
   (:refer-clojure :exclude [send])
-  (:import [org.zeromq ZMQ ZMQ$Context ZMQ$Socket ZMQQueue])
+  (:import [org.zeromq ZMQ ZMQ$Context ZMQ$Socket ZMQ$Poller ZMQQueue])
   (:import (java.util Random)
            (java.nio ByteBuffer)))
 
@@ -125,6 +125,29 @@
      ;;(-> socket (recv flags) String. .trim)
      (when-let [s (recv socket flags)]
        (-> s String. .trim))))
+
+(defn poller
+  "Return a new Poller instance.
+Realistically, this shouldn't be public...it opens the door
+for some pretty low-level stuff."
+  [socket-count]
+  (ZMQ$Poller. socket-count))
+
+(def poll-in ZMQ$Poller/POLLIN)
+(def poll-out ZMQ$Poller/POLLOUT)
+
+(defn register-in
+  "Register a listening socket to poll on." 
+  [#^ZMQ$Socket socket #^ZMQ$Poller poller]
+  (.register poller socket poll-in))
+
+(defn socket-poller-in
+  "Get a poller attached to a seq of sockets"
+  [sockets]
+  (let [checker (poller (count sockets))]
+    (doseq [s sockets]
+      (register-in s checker))
+    checker))
 
 (defn dump
   [#^ZMQ$Socket socket]
