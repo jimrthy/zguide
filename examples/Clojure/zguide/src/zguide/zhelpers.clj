@@ -16,19 +16,39 @@
      (try ~@body
           (finally (.term ~id)))))
 
+;; Non-blocking send/recv
+(def no-block ZMQ/NOBLOCK)
+(def dont-wait ZMQ/DONTWAIT)
+;; More message parts are coming
 (def sndmore ZMQ/SNDMORE)
 
-(def router ZMQ/XREP)
-(def dealer ZMQ/XREQ)
+;;; Socket types
+;; Request/Reply
 (def req ZMQ/REQ)
 (def rep ZMQ/REP)
-(def xreq ZMQ/XREQ)
-(def xrep ZMQ/XREP)
+;; Publish/Subscribe
 (def pub ZMQ/PUB)
 (def sub ZMQ/SUB)
-(def pair ZMQ/PAIR)
+;; Push/Pull
 (def push ZMQ/PUSH)
 (def pull ZMQ/PULL)
+;; Internal 1:1
+(def pair ZMQ/PAIR)
+
+;; Router/Dealer
+
+;; Creates/consumes request-reply routing envelopes.
+;; Lets you route messages to specific connections if you
+;; know their identities.
+(def router ZMQ/ROUTER)
+;; Combined ventilator/sink.
+;; Does load balancing on output and fair-queuing on input.
+;; Can shuffle messages out to N nodes then shuffle the replies back.
+;; Raw bidirectional async pattern.
+(def dealer ZMQ/DEALER)
+;; Obsolete names for Router/Dealer
+(def xreq ZMQ/XREQ)
+(def xrep ZMQ/XREP)
 
 (defn socket
   [#^ZMQ$Context context type]
