@@ -21,6 +21,7 @@
 (def dont-wait ZMQ/DONTWAIT)
 ;; More message parts are coming
 (def sndmore ZMQ/SNDMORE)
+(def send-more ZMQ/SNDMORE)
 
 ;;; Socket types
 ;; Request/Reply
@@ -29,6 +30,9 @@
 ;; Publish/Subscribe
 (def pub ZMQ/PUB)
 (def sub ZMQ/SUB)
+;; Extended Publish/Subscribe
+(def x-pub ZMQ/XPUB)
+(def x-sub ZMQ/XSUB)
 ;; Push/Pull
 (def push ZMQ/PUSH)
 (def pull ZMQ/PULL)
