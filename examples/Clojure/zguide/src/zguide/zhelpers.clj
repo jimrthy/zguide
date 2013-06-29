@@ -117,8 +117,11 @@
         (recur (conj acc msg))
         (conj acc msg)))))
 
-(defn recv-str [#^ZMQ$Socket socket]
-  (-> socket recv String. .trim))
+(defn recv-str
+  ([#^ZMQ$Socket socket]
+      (-> socket recv String. .trim))
+  ([#^ZMQ$Socket socket flags]
+     (->> socket (recv flags) String. .trim)))
 
 (defn dump
   [#^ZMQ$Socket socket]

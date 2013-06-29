@@ -13,22 +13,19 @@
         (mq/subscribe subscriber "10001 ")
         
         ;; Process messages from both sockets
-        (loop [frame-count 0]
+        (while true
           ;; Prioritize traffic from task ventilator
           (loop [task-attempts 0]
-            (let [message (mq/recv receiver zmq/dont-wait)]
+            (let [message (mq/recv-str receiver mq/dont-wait)]
               (when message
                 ;; Perform work
                 (recur (inc task-attempts)))))
           
           ;; Check for weather updates
           (loop [weather-attempts 0]
-            (let [message (mq/recv subscriber)]
+            (let [message (mq/recv subscriber mq/dont-wait)]
               (when message
                 ;; Deal with weather
                 (recur (inc weather-attempts)))))
           ;; No activity. Wait a bit.
-          (Thread/sleep 1)
-          (recur (inc frame-count)))
-        ;; Note that those loops never exit.
-        ))))
+          (Thread/sleep 1))))))
