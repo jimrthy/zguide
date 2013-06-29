@@ -18,8 +18,8 @@
           (while (not (.isInterrupted (Thread/currentThread)))
             (.poll poller)
             (when (.pollin poller 0)
-              (let [msg (mq/recv receiver)]
+              (let [msg (mq/recv-str receiver)]
                 (println "Work: " msg)))
             (when (.pollin poller 1)
-              (let [msg (mq/recv subscriber)]
+              (let [msg (mq/recv-str subscriber)]
                 (println "Weather: " msg)))))))))
