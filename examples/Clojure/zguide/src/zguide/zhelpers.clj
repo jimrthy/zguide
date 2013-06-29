@@ -121,7 +121,10 @@
   ([#^ZMQ$Socket socket]
       (-> socket recv String. .trim))
   ([#^ZMQ$Socket socket flags]
-     (->> socket (recv flags) String. .trim)))
+     ;; This approach risks NPE:
+     ;;(-> socket (recv flags) String. .trim)
+     (when-let [s (recv socket flags)]
+       (-> s String. .trim))))
 
 (defn dump
   [#^ZMQ$Socket socket]
